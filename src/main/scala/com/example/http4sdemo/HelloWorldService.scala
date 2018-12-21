@@ -1,16 +1,16 @@
 package com.example.http4sdemo
 
 import cats.effect.{Effect, IO}
-import io.circe.{Json, _}
+import com.example.http4sdemo.HelloWorldService.{ComplexGreeting, GreetingResponse}
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
+import io.circe.{Json, _}
 import org.http4s.HttpService
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
-import HelloWorldService.{ComplexGreeting, GreetingResponse}
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext
-import io.circe.generic.auto._
+import scala.concurrent.{ExecutionContext, Future}
+
+
 
 
 
@@ -23,7 +23,6 @@ class HelloWorldService[F[_]: Effect] extends Http4sDsl[F] {
   val repo = new GreetingRepository
 
   implicit val dec = CirceEntityDecoder.circeEntityDecoder[F, ComplexGreeting]
-
 
   val service: HttpService[F] = {
     HttpService[F] {
@@ -39,37 +38,18 @@ class HelloWorldService[F[_]: Effect] extends Http4sDsl[F] {
       case req @ POST -> Root / "api" / "greetings" => {
 
         req.decode[ComplexGreeting]{ greet =>
-
-          repo.saveOne(greet).map(id => Ok(id.asJson))
-
+          IO.fromFuture(IO(repo.saveOne(greet).map(Ok(_)))).unsafeRunSync // really ????
         }
-
-//        for {
-//          // Decode a User request
-//          greet <- req.as(jsonOf[ComplexGreeting])
-//          id <- repo.saveOne(greet)
-//          // Encode a hello response
-//          resp <- Ok(id).asJson
-//        } yield (resp)
-
       }
-
     }
   }
 }
 
 
 class GreetingRepository{
-//  def saveOne(greet: ComplexGreeting) = {
-//    Future.successful(Math.random().toInt)
-//  }
 
-  def saveOne[F[_]: Effect](greet: ComplexGreeting) = {
-    //Effect[F](Math.random().toInt)
-
-    Math.random().toInt
-    IO.fromFuture(Future.successful(Math.random().toInt))
-    //Future.successful(Math.random().toInt)
+  def saveOne(greet: ComplexGreeting) = {
+    Future.successful(Math.random().toString)
   }
 }
 
