@@ -12,20 +12,23 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 
+import scala.util.Random
+
 
 
 // asJson implicit
 import io.circe.syntax._
 
-class HelloWorldService[F[_]: Effect] extends Http4sDsl[F] {
+class HelloWorldService[F[_]: Effect] extends Http4sDsl[IO] {
 
   implicit val ec = ExecutionContext.global
   val repo = new GreetingRepository
 
-  implicit val dec = CirceEntityDecoder.circeEntityDecoder[F, ComplexGreeting]
+  //implicit val dec = CirceEntityDecoder.circeEntityDecoder[F, ComplexGreeting]
 
-  val service: HttpService[F] = {
-    HttpService[F] {
+
+  val service: HttpService[IO] = {
+    HttpService[IO] {
       case GET -> Root / "hello" / name =>
         Ok(Json.obj("message" -> Json.fromString(s"Hello, ${name}, how's it going today")))
 
@@ -37,9 +40,11 @@ class HelloWorldService[F[_]: Effect] extends Http4sDsl[F] {
 
       case req @ POST -> Root / "api" / "greetings" => {
 
-        req.decode[ComplexGreeting]{ greet =>
-          IO.fromFuture(IO(repo.saveOne(greet).map(Ok(_)))).unsafeRunSync // really ????
-        }
+        for{
+          greet <- req.decodeJson[ComplexGreeting]
+          id <- repo.saveOne(greet)
+          response <- Ok(id.asJson)
+        } yield response
       }
     }
   }
@@ -47,9 +52,15 @@ class HelloWorldService[F[_]: Effect] extends Http4sDsl[F] {
 
 
 class GreetingRepository{
+//  def saveOne(greet: ComplexGreeting) = {
+//    Future.successful(Math.random().toInt)
+//  }
+
+  val random = Random
 
   def saveOne(greet: ComplexGreeting) = {
-    Future.successful(Math.random().toString)
+
+    IO.fromFuture(IO(Future.successful{random.nextInt(10)}))
   }
 }
 

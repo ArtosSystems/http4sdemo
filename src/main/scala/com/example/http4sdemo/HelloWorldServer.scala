@@ -14,10 +14,10 @@ object HelloWorldServer extends StreamApp[IO] {
 
 object ServerStream {
 
-  def helloWorldService[F[_]: Effect] = new HelloWorldService[F].service
+  def helloWorldService[F[_]: Effect] = new HelloWorldService[IO]().service
 
   def stream[F[_]: Effect](implicit ec: ExecutionContext) =
-    BlazeBuilder[F]
+    BlazeBuilder[IO]
       .bindHttp(8085, "0.0.0.0")
       .mountService(helloWorldService, "/")
       .serve
