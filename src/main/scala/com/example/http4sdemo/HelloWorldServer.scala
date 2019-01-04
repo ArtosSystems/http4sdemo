@@ -16,9 +16,12 @@ object ServerStream {
 
   def helloWorldService[F[_]: Effect] = new HelloWorldService[IO]().service
 
+  def authedService = new AuthService().service
+
   def stream[F[_]: Effect](implicit ec: ExecutionContext) =
     BlazeBuilder[IO]
       .bindHttp(8085, "0.0.0.0")
       .mountService(helloWorldService, "/")
+      .mountService(authedService, "/auth")
       .serve
 }

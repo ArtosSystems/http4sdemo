@@ -8,13 +8,7 @@ import org.http4s.HttpService
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 
-import scala.concurrent.{ExecutionContext, Future}
-
-
-
-import scala.util.Random
-
-
+import scala.concurrent.ExecutionContext
 
 // asJson implicit
 import io.circe.syntax._
@@ -49,21 +43,6 @@ class HelloWorldService[F[_]: Effect] extends Http4sDsl[IO] {
     }
   }
 }
-
-
-class GreetingRepository{
-//  def saveOne(greet: ComplexGreeting) = {
-//    Future.successful(Math.random().toInt)
-//  }
-
-  val random = Random
-
-  def saveOne(greet: ComplexGreeting) = {
-
-    IO.fromFuture(IO(Future.successful{random.nextInt(10)}))
-  }
-}
-
 
 object HelloWorldService{
 
