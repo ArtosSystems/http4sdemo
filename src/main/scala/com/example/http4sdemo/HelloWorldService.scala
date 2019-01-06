@@ -37,7 +37,7 @@ class HelloWorldService[F[_]: Effect] extends Http4sDsl[IO] {
         for{
           greet <- req.decodeJson[ComplexGreeting]
           id <- repo.saveOne(greet)
-          response <- Ok(id.asJson)
+          response <- Created(id.asJson)
         } yield response
       }
     }
