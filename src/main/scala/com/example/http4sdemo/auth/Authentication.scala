@@ -1,25 +1,13 @@
-package com.example.http4sdemo
+package com.example.http4sdemo.auth
 
 import cats.data.{Kleisli, OptionT}
 import cats.effect.IO
-import org.http4s.{Request, _}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server._
 import org.http4s.util.CaseInsensitiveString
+import org.http4s.{Request, _}
 
-class AuthService {
-
-  import AuthService._
-
-  val authedService: AuthedService[User, IO] =
-    AuthedService {
-      case GET -> Root / "welcome" as user => Ok(s"Welcome, ${user.name}")
-    }
-
-  val service = middleware(authedService)
-}
-
-object AuthService extends Http4sDsl[IO]{
+object Authentication extends Http4sDsl[IO]{
 
   def parseRequest(req: Request[IO]): Either[String, User] = {
 
@@ -41,5 +29,4 @@ object AuthService extends Http4sDsl[IO]{
   val onFailure: AuthedService[String, IO] = Kleisli(req => OptionT.liftF(Forbidden(req.authInfo)))
 
   val middleware = AuthMiddleware(onRequest, onFailure)
-
 }

@@ -1,6 +1,7 @@
 package com.example.http4sdemo
 
 import cats.effect.IO
+import com.example.http4sdemo.services.HelloWorldService
 import org.http4s._
 import org.http4s.implicits._
 import org.specs2.matcher.MatchResult

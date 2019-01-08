@@ -1,6 +1,8 @@
 package com.example.http4sdemo
 
 import cats.effect.{Effect, IO}
+import com.example.http4sdemo.repos.GreetingRepository
+import com.example.http4sdemo.services.{AuthenticatedService, HelloWorldService}
 import fs2.StreamApp
 import org.http4s.server.blaze.BlazeBuilder
 
@@ -14,9 +16,9 @@ object HelloWorldServer extends StreamApp[IO] {
 
 object ServerStream {
 
-  def helloWorldService[F[_]: Effect] = new HelloWorldService[IO]().service
+  def helloWorldService[F[_]: Effect] = new HelloWorldService[IO](new GreetingRepository).service
 
-  def authedService = new AuthService().service
+  def authedService = new AuthenticatedService().service
 
   def stream[F[_]: Effect](implicit ec: ExecutionContext) =
     BlazeBuilder[IO]

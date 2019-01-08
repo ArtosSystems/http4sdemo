@@ -1,15 +1,12 @@
-package com.example.http4sdemo
+package com.example.http4sdemo.repos
 
 import cats.effect.IO
-import com.example.http4sdemo.HelloWorldService.ComplexGreeting
+import com.example.http4sdemo.services.HelloWorldService.ComplexGreeting
 
 import scala.concurrent.Future
 import scala.util.Random
 
 class GreetingRepository{
-//  def saveOne(greet: ComplexGreeting) = {
-//    Future.successful(Math.random().toInt)
-//  }
 
   val random = Random
 

@@ -1,25 +1,20 @@
-package com.example.http4sdemo
+package com.example.http4sdemo.services
 
 import cats.effect.{Effect, IO}
-import com.example.http4sdemo.HelloWorldService.{ComplexGreeting, GreetingResponse}
+import com.example.http4sdemo.repos.GreetingRepository
+import com.example.http4sdemo.services.HelloWorldService.{ComplexGreeting, GreetingResponse}
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 import io.circe.{Json, _}
 import org.http4s.HttpService
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 
-import scala.concurrent.ExecutionContext
-
 // asJson implicit
 import io.circe.syntax._
 
-class HelloWorldService[F[_]: Effect] extends Http4sDsl[IO] {
-
-  implicit val ec = ExecutionContext.global
-  val repo = new GreetingRepository
+class HelloWorldService[F[_]: Effect](repo: GreetingRepository) extends Http4sDsl[IO] {
 
   //implicit val dec = CirceEntityDecoder.circeEntityDecoder[F, ComplexGreeting]
-
 
   val service: HttpService[IO] = {
     HttpService[IO] {
@@ -49,10 +44,8 @@ object HelloWorldService{
   case class GreetingResponse(msg: String)
   case class ComplexGreeting(msg: String, age: Int)
 
-  //implicit val encoder: Encoder[Int] = deriveEncoder
-
   case object GreetingResponse{
-    implicit val encoder: Encoder[GreetingResponse] = deriveEncoder //Encoder.encodeString.contramap(_.msg)
+    implicit val encoder: Encoder[GreetingResponse] = deriveEncoder
   }
 
   case object ComplexGreeting{
