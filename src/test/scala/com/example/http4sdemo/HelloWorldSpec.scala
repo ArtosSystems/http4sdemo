@@ -1,6 +1,7 @@
 package com.example.http4sdemo
 
 import cats.effect.IO
+import com.example.http4sdemo.repos.GreetingRepository
 import com.example.http4sdemo.services.HelloWorldService
 import org.http4s._
 import org.http4s.implicits._
@@ -19,7 +20,8 @@ class HelloWorldSpec extends org.specs2.mutable.Specification {
 
   private[this] val retHelloWorld: Response[IO] = {
     val getHW = Request[IO](Method.GET, Uri.uri("/hello/world"))
-    new HelloWorldService[IO].service.orNotFound(getHW).unsafeRunSync()
+    // TODO mock greeting repository
+    new HelloWorldService[IO](new GreetingRepository).service.orNotFound(getHW).unsafeRunSync()
   }
 
   private[this] def uriReturns200(): MatchResult[Status] =
