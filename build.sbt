@@ -14,9 +14,14 @@ lazy val root = (project in file("."))
       "org.http4s"      %% "http4s-dsl"          % Http4sVersion,
       "org.specs2"      %% "specs2-core"          % Specs2Version % Test,
       "ch.qos.logback"  %  "logback-classic"     % LogbackVersion,
-      "io.circe"        %% "circe-generic"       % "0.11.0"
+      "io.circe"        %% "circe-generic"       % "0.11.0",
+      "io.github.scalapb-json" %% "scalapb-circe" % "0.3.0-M1"
     ),
     addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6"),
     addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")
   )
+
+PB.targets in Compile := Seq(
+  scalapb.gen() -> (sourceManaged in Compile).value
+)
 
