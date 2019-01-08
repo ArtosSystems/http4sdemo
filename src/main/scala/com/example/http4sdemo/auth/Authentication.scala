@@ -9,7 +9,7 @@ import org.http4s.{Request, _}
 
 object Authentication extends Http4sDsl[IO]{
 
-  def parseRequest(req: Request[IO]): Either[String, User] = {
+  private [Authentication] def parseRequest(req: Request[IO]): Either[String, User] = {
 
     val maybeUser = for {
       // reading from queryParams
