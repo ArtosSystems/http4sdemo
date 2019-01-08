@@ -9,7 +9,7 @@ class AuthenticatedService {
 
   import Authentication._
 
-  val authedService: AuthedService[User, IO] =
+  val authedService: AuthedService[AuthenticatedUser, IO] =
     AuthedService {
       case GET -> Root / "welcome" as user => Ok(s"Welcome, ${user.name}")
     }
